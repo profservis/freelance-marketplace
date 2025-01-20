@@ -1,25 +1,40 @@
 //C:\Users\Владелец\freelance-marketplace\client\src\components\ProviderProfile.js
 import React, { useEffect, useState } from 'react';
-import { getUserProfile } from '../services/api';////удален 5 , getServices, acceptService
+import { useParams, useNavigate } from 'react-router-dom';
+import { getUserProfile, getUserProfileById } from '../services/api';////удален 5 , getServices, acceptService
 
 const ProviderProfile = () => {
-  const [user, setUser] = useState(null);
-  //const [ services, setServices] = useState([]); ////удален 4*
+   //const [user, setUser] = useState(null);
+	//const [ services, setServices] = useState([]); ////удален 4*
+	const { id } = useParams(); // Получаем ID из URL
+	const navigate = useNavigate(); // Для перенаправления
+	const [provider, setProvider] = useState(null);
 
 	useEffect(() => {
-		const fetchProfile = async () => {
-			const response = await getUserProfile();
-			setUser(response.data);
+		const fetchProviderProfile = async () => {
+		try {
+			let response;
+			if (!id) {
+				// Если ID отсутствует, загружаем профиль текущего пользователя
+				response = await getUserProfile();
+				// Перенаправляем на маршрут с ID текущего пользователя
+				navigate(`/provider-profile/${response.data._id}`, { replace: true });
+			} else {
+				// Если ID указан, загружаем профиль по ID
+				response = await getUserProfileById(id);
+			}
+			setProvider(response.data);
+		} catch (error) {
+			console.error('Ошибка загрузки профиля исполнителя:', error.response?.data || error.message);
+		}
 		};
-		fetchProfile();
-
-		/* const fetchServices = async () => {
-			const response = await getServices();
-			setServices(response.data);
-		};
-		fetchServices(); //удален 3*/
-	}, []);
-
+		fetchProviderProfile();
+	}, [id, navigate]);
+	
+	if (!provider) {
+		return <p>Загрузка...</p>;
+	}
+	
   /* const handleAccept = async (serviceId) => {
     try {
       const response = await acceptService({ serviceId });
@@ -35,32 +50,14 @@ const ProviderProfile = () => {
     window.location.href = '/login';
   }; */
 
-  return (
-    <div>
-      <h2>Личный кабинет исполнителя</h2>
-      {user ? (
-        <div>
-          <h3>Профиль</h3>
-          <p>Имя: {user.name}</p>
-          <p>Email: {user.email}</p>
-          <p>Тип аккаунта: {user.accountType}</p>
-        </div>
-      ) : (
-        <p>Загрузка...</p>
-      )}
-      {/* <h3>Доступные услуги</h3>
-      {services.map((service) => (
-        <div key={service._id}>
-          <h4>{service.title}</h4>
-          <p>{service.description}</p>
-          <p>Цена: {service.price} $</p>
-          <p>Срок: {service.duration} дней</p>
-          <button onClick={() => handleAccept(service._id)}>Принять услугу</button>
-        </div>
-      ))} //удален 1*/}
-      {/* <button onClick={handleLogout}>Выйти</button> */}
-    </div>
-  );
+   return (
+		<div>
+			<h2>Профиль Исполнителя</h2>
+			<p>Имя: {provider.name}</p>
+			<p>Email: {provider.email}</p>
+			<p>Тип аккаунта: {provider.accountType}</p>
+		</div>
+   );
 };
 
 export default ProviderProfile;

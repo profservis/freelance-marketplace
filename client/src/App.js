@@ -1,5 +1,6 @@
 //C:\Users\Владелец\freelance-marketplace\client\src\App.js
 //Шаг 4: Настройка роутинга. Теперь настроим роутинг для приложения, чтобы пользователи могли переключаться между различными страницами.
+
 import './App.css';
 import React, { useState, useEffect } from 'react'; // Добавлен импорт useState
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
@@ -13,9 +14,13 @@ import ProviderProfile from './components/ProviderProfile';
 import { getCreatedServices } from './services/api'; // Импорт функции для получения созданных услуг
 
 const App = () => {
-  const accountType = localStorage.getItem('accountType');
-  const [createdServices, setCreatedServices] = useState([]);
+	const accountType = localStorage.getItem('accountType');
+	const [createdServices, setCreatedServices] = useState([]);
 
+	const token = localStorage.getItem('jwtToken');
+	const decodedToken = token ? JSON.parse(atob(token.split('.')[1])) : null;
+	const userId = decodedToken?.id;
+	
   useEffect(() => {
 	const fetchCreatedServices = async () => {
 	  try {
@@ -38,24 +43,25 @@ const App = () => {
 
   return (
     <Router>
-      <Navigation accountType={accountType} />
+     <Navigation accountType={accountType} userId={userId} />
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-service" element={<CreateService onServiceCreated={handleServiceCreated} />} />
         <Route path="/orders" element={<Orders accountType={accountType} createdServices={createdServices} />} />
         <Route path="/services" element={<Services />} />
-        <Route path="/customer-profile" element={<CustomerProfile />} />
-        <Route path="/provider-profile" element={<ProviderProfile />} />
+        <Route path="/customer-profile" element={<CustomerProfile />} />{/* — для личного профиля заказчика */}
+        <Route path="/provider-profile" element={<ProviderProfile />} />{/* - для просмотра профиля конкретного исполнителя */}
 		  <Route path="/" element={<h1>Добро пожаловать на фриланс-биржу!</h1>} />
-		  <Route path="/customer-profile/:id" element={<CustomerProfile />} /> {/* 5 */}
+		  <Route path="/customer-profile/:id" element={<CustomerProfile />} /> 
+		  <Route path="/provider-profile/:id" element={<ProviderProfile />} />
 
       </Routes>
     </Router>
   );
 };
 
-const Navigation = ({ accountType }) => {
+const Navigation = ({ accountType, userId }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -70,11 +76,11 @@ const Navigation = ({ accountType }) => {
         <li><Link to="/">Главная</Link></li>
         {!accountType && <li><Link to="/register">Регистрация</Link></li>}
         {!accountType && <li><Link to="/login">Авторизация</Link></li>}
-        {accountType === 'customer' && <li><Link to="/customer-profile">Профиль Заказчика</Link></li>}
-        {accountType === 'provider' && <li><Link to="/provider-profile">Профиль Исполнителя</Link></li>}
-        {accountType === 'customer' && <li><Link to="/create-service">Создать услугу</Link></li>}
-        {accountType === 'provider' && <li><Link to="/services">Доступные услуги</Link></li>}
-        {accountType && <li><Link to="/orders">Мои заказы</Link></li>}
+        {accountType === 'customer' && <li><Link to={`/customer-profile/${userId}`}>Профиль Заказчика</Link></li>}
+        {accountType === 'provider' && <li><Link to={`/provider-profile/${userId}`}>Профиль Исполнителя</Link></li>}
+        {accountType === 'customer' && <li><Link to="/create-service">Создать услугу</Link></li>} {/* У заказчика */}
+        {accountType === 'provider' && <li><Link to="/services">Доступные услуги</Link></li>} {/* у исполнителя */}
+        {accountType && <li><Link to="/orders">Мои заказы</Link></li>} {/* У заказчика и исполнителя? */}
         {accountType && <li><button onClick={handleLogout} style={{background: 'none', border: 'none', padding: 0, color: 'blue', cursor: 'pointer'}}>Выйти</button></li>}
       </ul>
     </nav>

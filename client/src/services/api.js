@@ -8,11 +8,17 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((req) => {
-    const token = localStorage.getItem('jwtToken');
-    if (token) {
-        req.headers.Authorization = `Bearer ${token}`;
-    }
-    return req;
+	const token = localStorage.getItem('jwtToken');
+	if (token) {
+		req.headers.Authorization = `Bearer ${token}`;
+	}
+	// Устанавливаем Content-Type только для запросов с телом (POST, PUT)
+	if (['POST', 'PUT', 'PATCH'].includes(req.method.toUpperCase())) {
+		req.headers['Content-Type'] = 'application/json';
+   }
+	console.log('Запрос:', req.method, req.url, req.headers);
+	console.log('Токен:', token);
+   return req;
 });
 
 export const registerUser = (userData) => API.post('/auth/register', userData);

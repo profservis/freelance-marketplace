@@ -2,7 +2,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
-
+const { rotateKeys } = require('./config/jwtKeys');//Теперь ротация ключей управляется вручную. Добавим автоматическую ротацию:
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -21,6 +21,7 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/services', require('./routes/serviceRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
+
 // Маршрут для корневого пути
 app.get('/', (req, res) => {
   res.send('Добро пожаловать на фриланс-биржу!');
@@ -29,3 +30,6 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5001;//Измените 5000 на другой порт, например, 5001
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Ротация ключей каждые 24 часа
+setInterval(rotateKeys, 24 * 60 * 60 * 1000);

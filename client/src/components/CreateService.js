@@ -25,9 +25,14 @@ const CreateService = ({ onServiceCreated }) => { //4 Мы добавим сос
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		// Проверка заполненности всех полей
+		if (!formData.title || !formData.description || !formData.price || !formData.duration) {
+			console.error('Все поля должны быть заполнены');
+			return;
+	   }
 		try {
 			const response = await createService(formData); // const response = await createService({ ...formData, status: 'published' });
-			console.log(response.data);
+			console.log('Услуга создана:', response.data);
 			
 			onServiceCreated(response.data);  // Сообщаем родительскому компоненту о созданной услуге
 			//setPreview(false); // 3 Очистка превью после успешной отправки
@@ -39,7 +44,7 @@ const CreateService = ({ onServiceCreated }) => { //4 Мы добавим сос
 				duration: '',
 			});
 		} catch (error) {
-			console.error(error.response.data.message);
+			console.error('Ошибка создания услуги:', error.response?.data || error.message);
 		}
 	};
 

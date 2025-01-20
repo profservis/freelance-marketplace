@@ -56,16 +56,20 @@ const Orders = ({ accountType, createdServices }) => {
 							<p>Услуга: {order.service.title}</p>
 
 							{/* Если у заказа есть исполнитель, делаем его логин ссылкой на профиль */}
-							{accountType !== 'provider' && order.provider && ( /* Чтобы скрыть поле "Исполнитель:" на странице исполнителя, можно использовать аналогичный подход с проверкой типа аккаунта. */
+							{accountType !== 'provider' && order.provider && (
 								<p>
-									Исполнитель: <Link to="/provider-profile">{order.provider.name}</Link> {/* Ссылка на профиль исполнителя */}
+									Исполнитель: <Link to={`/provider-profile/${order.provider._id}`}>{order.provider.name}</Link> {/* Динамическая ссылка */}
 								</p>
 							)}
 
+
 							
 							{accountType !== 'customer' && ( /* Этот код проверяет, что если тип аккаунта не является "customer" (заказчик), то отображается информация о заказчике. В противном случае, это поле не отображается. */
-								<p>Заказчик: <Link to={`/customer-profile/${order.customer._id}`}>{order.customer.name}</Link></p>
-							)}
+								<p>
+									Заказчик: <Link to={`/customer-profile/${order.customer._id}`}>{order.customer.name}</Link>
+									{console.log('Заказчик ID:', order.customer._id)} {/* Логирование ID заказчика */}
+								</p>
+                     )}
 
 
 							<p>Статус: {order.status}</p>

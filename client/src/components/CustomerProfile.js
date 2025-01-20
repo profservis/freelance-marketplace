@@ -1,12 +1,14 @@
 //C:\Users\Владелец\freelance-marketplace\client\src\components\CustomerProfile.js
 import React, { useEffect, useState } from 'react';
 import { getUserProfile } from '../services/api'; //удалил из скобок это: createService
-import { useParams } from 'react-router-dom';  //6 Импортируем useParams
+import { useParams, useNavigate } from 'react-router-dom';  //6 Импортируем useParams
 import { getUserProfileById } from '../services/api';  //7 Создадим новый метод для запроса профиля по ID
 
 const CustomerProfile = () => {
 	const { id } = useParams();  //8 Получаем id из URL
-  const [user, setUser] = useState(null);
+	console.log('Полученный id:', id);  // Логируем id для проверки
+	const navigate = useNavigate(); // Для перенаправления
+   const [user, setUser] = useState(null);
   /* const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -14,25 +16,31 @@ const CustomerProfile = () => {
     duration: '',
   }); */
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const response = await getUserProfile();
-      setUser(response.data);
-    };
-    fetchProfile();
-  }, []);
-
-  useEffect(() => { //9
-		const fetchProfile = async () => { 
-			try {
-				const response = await getUserProfileById(id);  // Запрашиваем профиль по id
-				setUser(response.data);
-			} catch (error) {
-				console.error('Error fetching profile:', error);
+	useEffect(() => {
+		const fetchProfile = async () => {
+		try {
+			let response;
+			if (id) {
+				console.log('Запрашиваем профиль по ID:', id);
+				response = await getUserProfileById(id);
+			} else {
+				console.log('Запрашиваем профиль текущего пользователя');
+				response = await getUserProfile();
+				// Перенаправляем на маршрут с ID, если ID отсутствует
+				navigate(`/customer-profile/${response.data._id}`);
+				return; // Прекращаем выполнение, чтобы избежать повторного вызова setUser
 			}
+			setUser(response.data);
+		} catch (error) {
+			console.error('Ошибка загрузки профиля:', error.response?.data || error.message);
+		}
 		};
 		fetchProfile();
-   }, [id]);
+	}, [id, navigate]);
+
+	if (!user) {
+		return <p>Загрузка...</p>;
+	}
 	
   /* const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

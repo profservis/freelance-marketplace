@@ -1,24 +1,17 @@
-//C:\Users\Владелец\freelance-marketplace\client\src\services\api.js
-//Создайте папку services для управления запросами к серверу:
-
+// C:\Users\Владелец\freelance-marketplace\client\src\services\api.js
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:5001/api',
+  baseURL: 'http://localhost:5001/api',
+  withCredentials: true, // отправка куков с каждым запросом
 });
 
 API.interceptors.request.use((req) => {
-	const token = localStorage.getItem('jwtToken');
-	if (token) {
-		req.headers.Authorization = `Bearer ${token}`;
-	}
-	// Устанавливаем Content-Type только для запросов с телом (POST, PUT)
-	if (['POST', 'PUT', 'PATCH'].includes(req.method.toUpperCase())) {
-		req.headers['Content-Type'] = 'application/json';
-   }
-	console.log('Запрос:', req.method, req.url, req.headers);
-	console.log('Токен:', token);
-   return req;
+  if (['POST', 'PUT', 'PATCH'].includes(req.method.toUpperCase())) {
+    req.headers['Content-Type'] = 'application/json';
+  }
+  console.log('Запрос:', req.method, req.url, req.headers);
+  return req;
 });
 
 export const registerUser = (userData) => API.post('/auth/register', userData);
@@ -32,6 +25,7 @@ export const getProviderOrders = () => API.get('/orders/provider');
 export const updateOrderStatus = (orderData) => API.put('/orders/status', orderData);
 export const getUserProfile = () => API.get('/users/profile');
 export const approveOrder = (orderId) => API.put('/orders/approve', { orderId });
-export const rejectOrder = (orderId) => API.put('/orders/reject', { orderId });//Убедитесь, что в файле api.js есть методы для взаимодействия с сервером.
-export const getCreatedServices = () => API.get('/services/created'); // Новый метод.
-export const getUserProfileById = (id) => API.get(`/users/profile/${id}`); //10
+export const rejectOrder = (orderId) => API.put('/orders/reject', { orderId });
+export const getCreatedServices = () => API.get('/services/created');
+export const getUserProfileById = (id) => API.get(`/users/profile/${id}`);
+export const logoutUser = () => API.post('/auth/logout');

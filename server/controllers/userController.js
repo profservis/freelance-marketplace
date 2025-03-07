@@ -34,4 +34,3 @@ module.exports = { //12
 	getUserProfile,
 	getUserProfileById
 };
- 

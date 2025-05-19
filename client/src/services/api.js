@@ -1,4 +1,5 @@
 // C:\Users\Владелец\freelance-marketplace\client\src\services\api.js
+
 import axios from 'axios';
 
 const API = axios.create({
@@ -17,6 +18,7 @@ API.interceptors.request.use((req) => {
 export const registerUser = (userData) => API.post('/auth/register', userData);
 export const loginUser = (userData) => API.post('/auth/login', userData);
 export const createService = (serviceData) => API.post('/services', serviceData);
+
 export const getServices = () => API.get('/services');
 export const acceptService = (serviceData) => API.post('/services/accept', serviceData);
 export const createOrder = (orderData) => API.post('/orders', orderData);
@@ -29,3 +31,4 @@ export const rejectOrder = (orderId) => API.put('/orders/reject', { orderId });
 export const getCreatedServices = () => API.get('/services/created');
 export const getUserProfileById = (id) => API.get(`/users/profile/${id}`);
 export const logoutUser = () => API.post('/auth/logout');
+export const rejectService = serviceData => API.post('/services/reject', serviceData);  // новый экспорт

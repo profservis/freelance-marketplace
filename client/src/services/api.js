@@ -18,7 +18,6 @@ API.interceptors.request.use((req) => {
 export const registerUser = (userData) => API.post('/auth/register', userData);
 export const loginUser = (userData) => API.post('/auth/login', userData);
 export const createService = (serviceData) => API.post('/services', serviceData);
-
 export const getServices = () => API.get('/services');
 export const acceptService = (serviceData) => API.post('/services/accept', serviceData);
 export const createOrder = (orderData) => API.post('/orders', orderData);

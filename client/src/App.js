@@ -33,7 +33,7 @@ const App = () => {
   }, [user]);
 
   const handleServiceCreated = (service) => {
-    setCreatedServices([...createdServices, service]);
+    setCreatedServices(prev => [service, ...prev]);
   };
 
   return (

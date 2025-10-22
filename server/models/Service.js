@@ -16,7 +16,7 @@ const serviceSchema = new mongoose.Schema({
 	category3: { type: String, required: true },
 	status: {
 		type: String,
-		enum: ['Создано', 'in progress', 'completed', 'cancelled', 'Отказано'],
+		enum: ['Создано', 'Опубликовано', 'in progress', 'completed', 'cancelled', 'Отказано'],
 		default: 'Создано'
 	},
 }, {

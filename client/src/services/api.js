@@ -31,3 +31,5 @@ export const getCreatedServices = () => API.get('/services/created');
 export const getUserProfileById = (id) => API.get(`/users/profile/${id}`);
 export const logoutUser = () => API.post('/auth/logout');
 export const rejectService = serviceData => API.post('/services/reject', serviceData);  // новый экспорт
+// NEW: получить список категорий с сервера
+export const getCategories = () => API.get('/categories');
